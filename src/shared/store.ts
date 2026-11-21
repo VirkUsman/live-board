@@ -15,10 +15,10 @@ export interface BoardState {
 
 export const emptyState: BoardState = { cards: {}, seq: 0, synced: false, pending: {}, presence: [] };
 
-export function applySnapshot(_state: BoardState, seq: number, cards: Card[]): BoardState {
+export function applySnapshot(state: BoardState, seq: number, cards: Card[]): BoardState {
   const map: Record<string, Card> = {};
   for (const c of cards) map[c.id] = c;
-  return { cards: map, seq, synced: true, pending: {}, presence: _state.presence };
+  return { cards: map, seq, synced: true, pending: {}, presence: state.presence };
 }
 
 export type EventResult = { state: BoardState; outcome: "applied" | "duplicate" | "gap" };
@@ -43,7 +43,8 @@ export function optimistic(state: BoardState, reqId: string, next: Card): BoardS
 }
 
 function withoutPending(state: BoardState, reqId: string): Record<string, Pending> {
-  const { [reqId]: _gone, ...rest } = state.pending;
+  const rest = { ...state.pending };
+  delete rest[reqId];
   return rest;
 }
 
