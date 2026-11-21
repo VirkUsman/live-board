@@ -19,18 +19,21 @@ describe("parseClientMessage: hello", () => {
     expect(r.ok && r.message.type === "hello" && r.message.user.name).toBe("Ana");
   });
 
-  it.each([
-    ["a board id with a slash", { board: "a/b" }],
-    ["an empty board id", { board: "" }],
-    ["a missing user", { user: undefined }],
-    ["a user id with spaces", { user: { id: "a b", name: "Ana" } }],
-    ["a blank user name", { user: { id: "ana", name: "  " } }],
-    ["a 41 character name", { user: { id: "ana", name: "x".repeat(41) } }],
-    ["a negative lastSeq", { lastSeq: -1 }],
-    ["a fractional lastSeq", { lastSeq: 1.5 }],
-    ["a string lastSeq", { lastSeq: "3" }],
-  ])("refuses %s", (_label, patch) => {
-    expect(parseClientMessage(j({ ...hello, ...patch })).ok).toBe(false);
+  it("refuses each malformed field", () => {
+    const bad: [string, Record<string, unknown>][] = [
+      ["a board id with a slash", { board: "a/b" }],
+      ["an empty board id", { board: "" }],
+      ["a missing user", { user: undefined }],
+      ["a user id with spaces", { user: { id: "a b", name: "Ana" } }],
+      ["a blank user name", { user: { id: "ana", name: "  " } }],
+      ["a 41 character name", { user: { id: "ana", name: "x".repeat(41) } }],
+      ["a negative lastSeq", { lastSeq: -1 }],
+      ["a fractional lastSeq", { lastSeq: 1.5 }],
+      ["a string lastSeq", { lastSeq: "3" }],
+    ];
+    for (const [label, patch] of bad) {
+      expect(parseClientMessage(j({ ...hello, ...patch })).ok, label).toBe(false);
+    }
   });
 });
 
@@ -81,8 +84,10 @@ describe("parseClientMessage: junk", () => {
     expect(parseClientMessage("{nope")).toEqual({ ok: false, error: "not json" });
   });
 
-  it.each(["null", "[]", "3", '"hello"'])("refuses %s", (raw) => {
-    expect(parseClientMessage(raw)).toEqual({ ok: false, error: "not an object" });
+  it("refuses json that is not an object", () => {
+    for (const raw of ["null", "[]", "3", '"hello"']) {
+      expect(parseClientMessage(raw), raw).toEqual({ ok: false, error: "not an object" });
+    }
   });
 
   it("refuses an unknown type", () => {
