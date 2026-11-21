@@ -100,15 +100,15 @@ file writes under its own key prefix and deletes it afterwards.
 
 | Area | Tests | What is checked |
 |---|---|---|
-| Parser | 17 | every field of every client message, junk input |
-| Redis script | 17 | versions, numbers, 20 racing moves, 50 racing creates, snapshot, publish |
+| Parser | 14 | every field of every client message, junk input |
+| Redis script | 15 | versions, numbers, 20 racing moves, 50 racing creates, snapshot, publish |
 | Replay | 10 | missed events only, 450 event backlog, 200 events while a reader reconnects repeatedly: 0 repeats, 0 gaps |
 | Instances | 5 | two servers, same 1 to 20 run for both clients, replay on the other server |
 | Conflicts | 8 | winner, loser's card, retry, stale rename, missing card, duplicate create |
 | Presence | 9 | join, leave, one user two sockets, mute socket, destroyed transport, stale entry |
 | Edges | 9 | bad JSON, no hello, double hello, 20 KB frame closes with 1009, `/health` |
 | Client store | 16 | order, repeats, holes, optimism, rejection |
-| Connection and client | 27 | hello with `lastSeq`, backoff 100, 200, 400, 800 ms to a cap, rollback on drop |
+| Connection and client | 27 (11 and 16) | hello with `lastSeq`, backoff 100, 200, 400, 800 ms to a cap, rollback on drop |
 | Screen | 12 | columns, counts, disabled buttons, alert, presence list |
 | End to end | 4 | two boards on a real server, simultaneous move, drop and catch up |
 
