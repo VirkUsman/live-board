@@ -75,7 +75,7 @@ The test for this uses a client built with `autoPong: false`, which never
 answers a ping and never sends a close frame. With a 100 ms beat it is gone
 from the other client's list in under 1.5 seconds (the test asserts that bound).
 
-## Running it
+## Starting it by hand
 
 You need Node 22 or newer and Redis.
 
