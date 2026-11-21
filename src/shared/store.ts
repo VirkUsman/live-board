@@ -60,10 +60,11 @@ export function reject(state: BoardState, reqId: string, serverCard?: Card): Boa
   if (!p) return { ...state, pending };
   const current = state.cards[p.id];
   const cards = { ...state.cards };
-  if (serverCard && (!current || serverCard.version >= current.version)) {
-    cards[p.id] = serverCard;
+  if (serverCard) {
+    if (!current || serverCard.version >= current.version) cards[p.id] = serverCard;
   } else if (p.before) {
-    cards[p.id] = p.before;
+    // Without a card from the server, undo only if nothing newer has landed.
+    if (!current || current.version <= p.before.version) cards[p.id] = p.before;
   } else {
     delete cards[p.id];
   }
